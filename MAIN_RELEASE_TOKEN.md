@@ -27,6 +27,31 @@ needs no package permission.
 Use an account that is a member of `discobox-ai` with write access to
 `discobox-ai/discobox-main`.
 
+### The account needs Write on this repository
+
+A fine-grained token never has more access than the account that owns it: the
+**Contents** permission given to the token is checked against the account's
+role on the repository, and the token gets only what both allow. **Triage** or
+**Read** is not enough. With either, the token can read releases (the check
+below still answers 200), but creating, uploading, editing and deleting
+releases and deleting tags fail with 403 or 404. The first main build then
+fails at `publish`.
+
+For a bot account:
+
+1. Keep it a member of `discobox-ai`, so that it can choose `discobox-ai` as
+   the token's resource owner.
+2. Give it **Write** on `discobox-ai/discobox-main` only
+   (**Settings** → **Collaborators and teams**), directly or through a team
+   that has no other repository. Its role on other repositories, including
+   `discobox-ai/discobox`, doesn't matter to this token. Storing the secret
+   there is an admin's step, not the bot's.
+3. Optional: Write also lets the account push to `main` here. A branch
+   ruleset on `main` that blocks pushes and deletions stops that without
+   affecting main builds. Release creation tags the latest commit of `main`
+   but never pushes to it.
+4. Sign in as the bot and create the token as below.
+
 1. Open <https://github.com/settings/personal-access-tokens/new>
    (profile picture → **Settings** → **Developer settings** →
    **Personal access tokens** → **Fine-grained tokens** →
